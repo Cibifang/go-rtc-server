@@ -82,6 +82,10 @@ func (t *Task) Process(jsip *JSIP) {
 	t.msgs <- jsip
 }
 
+func Realm() string {
+	return jstack.Realm()
+}
+
 func GetTask(dlg string) *Task {
 	taskRWLock.RLock()
 	defer taskRWLock.RUnlock()
