@@ -20,14 +20,13 @@ type RTCModuleConfig struct {
 	TlsListen     string
 	Cert          string
 	Key           string
-	Location      string `default:"/rtc"`
-	Realm         string
 }
 
 type RTCModule struct {
 	config    *RTCModuleConfig
 	server    *http.Server
 	tlsServer *http.Server
+	jstack    *rtclib.JSIPStack
 }
 
 var module *RTCModule
@@ -97,15 +96,14 @@ func (m *RTCModule) Init() bool {
 		return false
 	}
 
-	rtclib.InitHandler(process, log, m.config.Realm, m.config.Location)
-
-	if m.config.Realm == "" {
-		LogError("Local Realm not configured")
+	m.jstack = rtclib.InitJSIPStack(process, log)
+	if m.jstack == nil {
+		LogError("JSIP Stack init error")
 		return false
 	}
 
 	serveMux := &http.ServeMux{}
-	serveMux.HandleFunc(m.config.Location, rtclib.RTCServer)
+	serveMux.HandleFunc(m.jstack.Location(), m.jstack.RTCServer)
 
 	if m.config.Listen != "" {
 		m.server = &http.Server{Addr: m.config.Listen, Handler: serveMux}
