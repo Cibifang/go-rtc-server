@@ -3,4 +3,5 @@ github.com/gorilla/websocket
 github.com/bitly/go-simplejson
 github.com/satori/go.uuid
 github.com/tidwall/gjson
-github.com/go-redis/redis
+gopkg.in/redis.v5
+
